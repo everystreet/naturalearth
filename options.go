@@ -37,7 +37,7 @@ func defaultConfig(uri string) config {
 				Value: "naturalearth",
 			},
 			{
-				Name:  "source",
+				Name:  "source_uri",
 				Value: uri,
 			},
 		},
