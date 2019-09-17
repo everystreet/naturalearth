@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/mercatormaps/go-geojson"
 
@@ -45,13 +44,7 @@ func (e *ElasticSearch) Connect(hosts ...string) error {
 	return nil
 }
 
-func (e *ElasticSearch) Insert(feat *geojson.Feature, idSuffix string) (string, error) {
-	var name string
-	if err := feat.Properties.GetType("name_en", &name); err != nil {
-		return "", errors.Wrap(err, "missing or invalid 'name_en' property")
-	}
-	key := strings.NewReplacer(" ", "_").Replace(strings.ToLower(name)) + idSuffix
-
+func (e *ElasticSearch) Insert(feat *geojson.Feature, key string) (string, error) {
 	body, err := json.Marshal(feat)
 	if err != nil {
 		return key, errors.Wrap(err, "failed to marshal feature")

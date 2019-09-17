@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strconv"
 	"sync"
 	"sync/atomic"
 
-	"github.com/mercatormaps/go-geojson"
 	"github.com/mercatormaps/naturalearth"
+	"github.com/mercatormaps/naturalearth/data"
 
 	"github.com/BurntSushi/toml"
 	"github.com/gosuri/uiprogress"
@@ -17,9 +16,9 @@ import (
 )
 
 const (
-	AdminCountries110 = "countries-110"
-	AdminCountries50  = "countries-50"
-	AdminCountries10  = "countries-10"
+	Admin110BoundaryLines = "boundaries-110"
+	Admin50BoundaryLines  = "boundaries-50"
+	Admin50StatesLines    = "states-50"
 )
 
 func main() {
@@ -52,76 +51,55 @@ func update(conf *updateConf) {
 		os.Exit(1)
 	}
 
-	opts := []naturalearth.Option{
-		naturalearth.RenameProperties(map[string]string{
-			"NAME_EN": "name_en",
-		}),
-		naturalearth.AddProperties(geojson.Property{
-			Name:  "source",
-			Value: "naturalearth",
-		}),
-	}
-
-	type updater func() (*naturalearth.UpdateProgress, error)
-	updaters := make(map[string]updater)
-	for name, uri := range config.DataSources {
-		switch name {
-		case AdminCountries110:
-			fallthrough
-		case AdminCountries50:
-			fallthrough
-		case AdminCountries10:
-			props, ok := props[name]
-			if !ok {
-				fmt.Fprintf(os.Stderr, "Missing properties for data source '%s'\n", name)
-				os.Exit(1)
-			}
-
-			suffix := "_" + strconv.Itoa(props.suffix)
-			updaters[name] = func() (*naturalearth.UpdateProgress, error) {
-				return naturalearth.Update(uri, suffix, store,
-					append(opts, naturalearth.AddProperties(props.new...))...)
-			}
-		default:
-			fmt.Fprintf(os.Stderr, "Unknown data source '%s': %s\n", name, uri)
-			os.Exit(1)
-		}
-
-		fmt.Printf("%s: %s\n", name, uri)
-	}
-
 	uiprogress.Start()
 
+	concurrency := 2
+	tokens := make(chan struct{}, concurrency)
+	defer close(tokens)
+	for i := 0; i < concurrency; i++ {
+		tokens <- struct{}{}
+	}
+
 	var numFeatures uint64
-	wg := sync.WaitGroup{}
-	for name, update := range updaters {
+	var wg = sync.WaitGroup{}
+	for name, uri := range config.DataSources {
+		token := <-tokens
 		wg.Add(1)
-		go func(name string, update updater) {
-			prog, err := update()
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Failed to process '%s': %s\n", name, err.Error())
+
+		go func(name, uri string) {
+			defer func() {
+				tokens <- token
+				wg.Done()
+			}()
+
+			var source *naturalearth.Source
+			switch name {
+			case data.Boundaries110Name:
+				source = data.Boundaries110()
+			case data.Boundaries50Name:
+				source = data.Boundaries50()
+			case data.StateLines50Name:
+				source = data.StateLines50()
+			}
+
+			if source == nil {
+				fmt.Fprintf(os.Stderr, "Unknown data source '%s'\n", name)
 				os.Exit(1)
 			}
 
-			bar := uiprogress.AddBar(int(prog.Total))
-			bar.AppendCompleted()
-			bar.PrependFunc(func(b *uiprogress.Bar) string {
-				return name
-			})
-
-			for n := range prog.Progress {
-				bar.Set(int(n))
+			source.Label = label(source.Name)
+			if err := source.Load(uri, store); err != nil {
+				fmt.Fprintf(os.Stderr, "Failed to process '%s': %v\n", name, err)
+				os.Exit(1)
 			}
 
-			bar.Set(int(prog.Total))
-			atomic.AddUint64(&numFeatures, uint64(prog.Total))
-			wg.Done()
-		}(name, update)
+			atomic.AddUint64(&numFeatures, uint64(source.NumFeatures()))
+		}(name, uri)
 	}
 	wg.Wait()
 
 	uiprogress.Stop()
-	fmt.Printf("Processed %d features from %d source(s) successfully\n", numFeatures, len(updaters))
+	fmt.Printf("\nProcessed %d features from %d source(s) successfully\n", numFeatures, len(config.DataSources))
 }
 
 type updateConf struct {
@@ -149,49 +127,6 @@ type config struct {
 	} `toml:"data-store"`
 }
 
-type properties struct {
-	suffix int
-	new    []geojson.Property
-}
-
-var props = map[string]properties{
-	AdminCountries110: properties{
-		suffix: 0,
-		new: []geojson.Property{
-			{
-				Name:  "type",
-				Value: "country",
-			},
-			{
-				Name:  "max_zoom",
-				Value: 2,
-			},
-		},
-	},
-	AdminCountries50: properties{
-		suffix: 3,
-		new: []geojson.Property{
-			{
-				Name:  "type",
-				Value: "country",
-			},
-			{
-				Name:  "max_zoom",
-				Value: 3,
-			},
-		},
-	},
-	AdminCountries10: properties{
-		suffix: 4,
-		new: []geojson.Property{
-			{
-				Name:  "type",
-				Value: "country",
-			},
-			{
-				Name:  "max_zoom",
-				Value: 6,
-			},
-		},
-	},
+func label(name string) string {
+	return fmt.Sprintf("%-*s", data.MaxNameLen(), name)
 }

@@ -26,6 +26,8 @@ type Shapefile interface {
 	Err() error
 }
 
+const NumberPropertyName = "number"
+
 func NewScanner(shp Shapefile) *Scanner {
 	return &Scanner{
 		shp:        shp,
@@ -46,6 +48,7 @@ func (s *Scanner) Scan(fieldProps map[string]string) error {
 			return fmt.Errorf("field '%s' does not exist in shapefile", field)
 		}
 		fields[i] = field
+		i++
 	}
 	s.shp.AddOptions(shapefile.FilterFields(fields...))
 
@@ -63,13 +66,14 @@ func (s *Scanner) Scan(fieldProps map[string]string) error {
 				close(s.featuresCh)
 			}()
 
-			for {
+			for i := uint(1); ; i++ {
 				rec := s.shp.Record()
 				if rec == nil {
 					break
 				}
 
-				feat := rec.GeoJSONFeature(shapefile.RenameProperties(fieldProps))
+				feat := rec.GeoJSONFeature(shapefile.RenameProperties(fieldProps)).
+					AddProperty(NumberPropertyName, i)
 				s.featuresCh <- feat
 			}
 		}()

@@ -8,13 +8,19 @@ type Option func(*config)
 
 func AddProperties(props ...geojson.Property) Option {
 	return func(c *config) {
-		c.newProps = props
+		c.newProps = append(c.newProps, props...)
 	}
 }
 
-func RenameProperties(oldNew map[string]string) Option {
+func AddProperty(prop geojson.Property) Option {
 	return func(c *config) {
-		c.oldNewProps = oldNew
+		c.newProps = append(c.newProps, prop)
+	}
+}
+
+func RenameProperty(old, new string) Option {
+	return func(c *config) {
+		c.oldNewProps[old] = new
 	}
 }
 
@@ -23,6 +29,18 @@ type config struct {
 	oldNewProps map[string]string
 }
 
-func defaultConfig() config {
-	return config{}
+func defaultConfig(uri string) config {
+	return config{
+		newProps: []geojson.Property{
+			{
+				Name:  "source",
+				Value: "naturalearth",
+			},
+			{
+				Name:  "source",
+				Value: uri,
+			},
+		},
+		oldNewProps: make(map[string]string),
+	}
 }
