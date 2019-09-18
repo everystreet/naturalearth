@@ -8,9 +8,9 @@ import (
 	"github.com/mercatormaps/naturalearth"
 )
 
-var Boundaries10 = func() *naturalearth.Source {
+var BoundaryLines10 = func() *naturalearth.Source {
 	return &naturalearth.Source{
-		Name: Boundaries10Name,
+		Name: BoundaryLines10Name,
 		Opts: []naturalearth.Option{
 			naturalearth.AddProperty(PropType, TypePropBoundary),
 			naturalearth.AddProperty(PropMinZoom, 4),

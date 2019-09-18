@@ -3,19 +3,19 @@ package data
 type Name string
 
 const (
-	Boundaries110Name = "boundaries-110m"
-	Boundaries50Name  = "boundaries-50m"
-	Boundaries10Name  = "boundaries-10m"
-	StateLines50Name  = "states-50m"
-	StateLines10Name  = "states-10m"
+	BoundaryLines110Name = "boundary-lines-110m"
+	BoundaryLines50Name  = "boundary-lines-50m"
+	BoundaryLines10Name  = "boundary-lines-10m"
+	StateLines50Name     = "state-lines-50m"
+	StateLines10Name     = "state-lines-10m"
 )
 
 func MaxNameLen() int {
 	var n int
 	for _, name := range []string{
-		Boundaries110Name,
-		Boundaries50Name,
-		Boundaries10Name,
+		BoundaryLines110Name,
+		BoundaryLines50Name,
+		BoundaryLines10Name,
 		StateLines50Name,
 		StateLines10Name,
 	} {
