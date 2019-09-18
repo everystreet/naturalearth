@@ -61,7 +61,7 @@ func (f *RemoteFile) Open() (*shapefile.ZipScanner, error) {
 	defer close(done)
 
 	go func() {
-		tick := time.NewTicker(100 * time.Millisecond)
+		tick := time.NewTicker(10 * time.Millisecond)
 		defer tick.Stop()
 
 		for {
