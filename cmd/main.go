@@ -84,6 +84,8 @@ func update(conf *updateConf) {
 				source = data.StateLines50()
 			case data.StateLines10Name:
 				source = data.StateLines10()
+			case data.Glaciers110Name:
+				source = data.Glaciers110()
 			}
 
 			if source == nil {
