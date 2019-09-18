@@ -72,23 +72,8 @@ func update(conf *updateConf) {
 				wg.Done()
 			}()
 
-			var source *naturalearth.Source
-			switch name {
-			case data.BoundaryLines110Name:
-				source = data.BoundaryLines110()
-			case data.BoundaryLines50Name:
-				source = data.BoundaryLines50()
-			case data.BoundaryLines10Name:
-				source = data.BoundaryLines10()
-			case data.StateLines50Name:
-				source = data.StateLines50()
-			case data.StateLines10Name:
-				source = data.StateLines10()
-			case data.Glaciers110Name:
-				source = data.Glaciers110()
-			}
-
-			if source == nil {
+			source, ok := data.Source(name)
+			if !ok {
 				fmt.Fprintf(os.Stderr, "Unknown data source '%s'\n", name)
 				os.Exit(1)
 			}
