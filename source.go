@@ -78,9 +78,13 @@ func (s *Source) load(zip *shapefile.ZipScanner, uri string, store Store) error 
 		}
 
 		props := conf.newProps
+		if numProp, ok := feat.Properties.Get(NumberPropertyName); ok {
+			props = append(props, *numProp)
+		}
+
 		for _, prop := range feat.Properties {
 			for _, name := range conf.oldNewProps {
-				if name == prop.Name || prop.Name == NumberPropertyName {
+				if name == prop.Name {
 					props = append(props, prop)
 				}
 			}

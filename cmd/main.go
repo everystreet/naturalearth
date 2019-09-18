@@ -78,8 +78,12 @@ func update(conf *updateConf) {
 				source = data.Boundaries110()
 			case data.Boundaries50Name:
 				source = data.Boundaries50()
+			case data.Boundaries10Name:
+				source = data.Boundaries10()
 			case data.StateLines50Name:
 				source = data.StateLines50()
+			case data.StateLines10Name:
+				source = data.StateLines10()
 			}
 
 			if source == nil {

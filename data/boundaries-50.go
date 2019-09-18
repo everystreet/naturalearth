@@ -5,24 +5,22 @@ import (
 
 	"github.com/mercatormaps/go-geojson"
 	"github.com/mercatormaps/naturalearth"
-	"github.com/pkg/errors"
 )
 
 var Boundaries50 = func() *naturalearth.Source {
 	return &naturalearth.Source{
 		Name: Boundaries50Name,
 		Opts: []naturalearth.Option{
-			naturalearth.AddProperty(geojson.Property{Name: "type", Value: "boundary"}),
-			naturalearth.AddProperty(geojson.Property{Name: "max_zoom", Value: 3}),
-			naturalearth.RenameProperty("scalerank", "scale_rank"),
-			naturalearth.RenameProperty("min_zoom", "min_zoom"),
+			naturalearth.AddProperty(PropType, TypePropBoundary),
+			naturalearth.AddProperty(PropMinZoom, 1),
+			naturalearth.AddProperty(PropMaxZoom, 3),
 		},
 		GetKey: func(feat *geojson.Feature) (string, error) {
 			var num uint
 			if err := feat.Properties.GetType(naturalearth.NumberPropertyName, &num); err != nil {
-				return "", errors.Wrap(err, "missing or invalid 'num' property")
+				return "", err
 			}
-			return fmt.Sprintf("boundary_50-%d", num), nil
+			return fmt.Sprintf("boundary_50m-%d", num), nil
 		},
 	}
 }

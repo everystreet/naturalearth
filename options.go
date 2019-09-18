@@ -6,21 +6,9 @@ import (
 
 type Option func(*config)
 
-func AddProperties(props ...geojson.Property) Option {
+func AddProperty(name string, value interface{}) Option {
 	return func(c *config) {
-		c.newProps = append(c.newProps, props...)
-	}
-}
-
-func AddProperty(prop geojson.Property) Option {
-	return func(c *config) {
-		c.newProps = append(c.newProps, prop)
-	}
-}
-
-func RenameProperty(old, new string) Option {
-	return func(c *config) {
-		c.oldNewProps[old] = new
+		c.newProps = append(c.newProps, geojson.Property{Name: name, Value: value})
 	}
 }
 

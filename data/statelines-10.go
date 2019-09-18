@@ -7,20 +7,20 @@ import (
 	"github.com/mercatormaps/naturalearth"
 )
 
-var StateLines50 = func() *naturalearth.Source {
+var StateLines10 = func() *naturalearth.Source {
 	return &naturalearth.Source{
-		Name: StateLines50Name,
+		Name: StateLines10Name,
 		Opts: []naturalearth.Option{
 			naturalearth.AddProperty(PropType, TypePropBoundary),
-			naturalearth.AddProperty(PropMinZoom, 1),
-			naturalearth.AddProperty(PropMaxZoom, 3),
+			naturalearth.AddProperty(PropMinZoom, 4),
+			naturalearth.AddProperty(PropMaxZoom, 4),
 		},
 		GetKey: func(feat *geojson.Feature) (string, error) {
 			var num uint
 			if err := feat.Properties.GetType(naturalearth.NumberPropertyName, &num); err != nil {
 				return "", err
 			}
-			return fmt.Sprintf("state_50m-%d", num), nil
+			return fmt.Sprintf("state_10m-%d", num), nil
 		},
 	}
 }
