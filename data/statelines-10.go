@@ -15,6 +15,13 @@ var StateLines10 = func() *naturalearth.Source {
 			naturalearth.AddProperty(PropMinZoom, 4),
 			naturalearth.AddProperty(PropMaxZoom, 4),
 		},
+		ShouldStore: func(feat *geojson.Feature) (bool, error) {
+			var minZoom float64
+			if err := feat.Properties.GetType(PropMinZoom, &minZoom); err != nil {
+				return false, err
+			}
+			return minZoom <= 5, nil
+		},
 		GetKey: func(feat *geojson.Feature) (string, error) {
 			var num uint
 			if err := feat.Properties.GetType(naturalearth.NumberPropertyName, &num); err != nil {

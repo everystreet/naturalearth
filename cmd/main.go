@@ -60,7 +60,7 @@ func update(conf *updateConf) {
 		tokens <- struct{}{}
 	}
 
-	var numFeatures uint64
+	var numFeatures, storedFeatures uint64
 	var wg = sync.WaitGroup{}
 	for name, uri := range config.DataSources {
 		token := <-tokens
@@ -98,12 +98,14 @@ func update(conf *updateConf) {
 			}
 
 			atomic.AddUint64(&numFeatures, uint64(source.NumFeatures()))
+			atomic.AddUint64(&storedFeatures, uint64(source.StoredFeatures()))
 		}(name, uri)
 	}
 	wg.Wait()
 
 	uiprogress.Stop()
-	fmt.Printf("\nProcessed %d features from %d source(s) successfully\n", numFeatures, len(config.DataSources))
+	fmt.Printf("\nStored %d features (out of %d in total) from %d source(s) successfully\n",
+		storedFeatures, numFeatures, len(config.DataSources))
 }
 
 type updateConf struct {
