@@ -1,9 +1,6 @@
 package data
 
 import (
-	"fmt"
-
-	"github.com/mercatormaps/go-geojson"
 	"github.com/mercatormaps/naturalearth"
 )
 
@@ -17,12 +14,6 @@ var Glaciers110 = func() *naturalearth.Source {
 			naturalearth.AddProperty(PropLandcoverClass, LandcoverClassPropIce),
 			naturalearth.AddProperty(PropLandcoverSubclass, LandcoverSubclassPropGlacier),
 		},
-		GetKey: func(feat *geojson.Feature) (string, error) {
-			var num uint
-			if err := feat.Properties.GetType(naturalearth.NumberPropertyName, &num); err != nil {
-				return "", err
-			}
-			return fmt.Sprintf("glacier_110m-%d", num), nil
-		},
+		GetKey: BasicKey("glacier_110m"),
 	}
 }

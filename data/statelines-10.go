@@ -1,8 +1,6 @@
 package data
 
 import (
-	"fmt"
-
 	"github.com/mercatormaps/go-geojson"
 	"github.com/mercatormaps/naturalearth"
 )
@@ -22,12 +20,6 @@ var StateLines10 = func() *naturalearth.Source {
 			}
 			return minZoom <= 5, nil
 		},
-		GetKey: func(feat *geojson.Feature) (string, error) {
-			var num uint
-			if err := feat.Properties.GetType(naturalearth.NumberPropertyName, &num); err != nil {
-				return "", err
-			}
-			return fmt.Sprintf("state_10m-%d", num), nil
-		},
+		GetKey: BasicKey("state_10m"),
 	}
 }

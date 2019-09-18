@@ -1,7 +1,6 @@
 package data
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/mercatormaps/go-geojson"
@@ -23,12 +22,6 @@ var BoundaryLines10 = func() *naturalearth.Source {
 			}
 			return !strings.EqualFold(class, FeatureClassPropLeaseLimit), nil
 		},
-		GetKey: func(feat *geojson.Feature) (string, error) {
-			var num uint
-			if err := feat.Properties.GetType(naturalearth.NumberPropertyName, &num); err != nil {
-				return "", err
-			}
-			return fmt.Sprintf("boundary_10m-%d", num), nil
-		},
+		GetKey: BasicKey("boundary_10m"),
 	}
 }
