@@ -11,6 +11,8 @@ const (
 	StateLines50Name     = "state-lines-50m"
 	StateLines10Name     = "state-lines-10m"
 	Glaciers110Name      = "glaciers-110m"
+	Glaciers50Name       = "glaciers-50m"
+	Glaciers10Name       = "glaciers-10m"
 )
 
 var sources = map[Name]func() *naturalearth.Source{
@@ -20,6 +22,8 @@ var sources = map[Name]func() *naturalearth.Source{
 	StateLines50Name:     StateLines50,
 	StateLines10Name:     StateLines10,
 	Glaciers110Name:      Glaciers110,
+	Glaciers50Name:       Glaciers50,
+	Glaciers10Name:       Glaciers10,
 }
 
 func Source(name string) (*naturalearth.Source, bool) {
