@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/mercatormaps/go-geojson"
 	"github.com/mercatormaps/go-shapefile"
 )
 
 type Scanner struct {
 	shp Shapefile
 
-	scanOnce   sync.Once
-	featuresCh chan *geojson.Feature
+	scanOnce  sync.Once
+	recordsCh chan *shapefile.Record
 
 	errOnce sync.Once
 	err     error
@@ -30,25 +29,21 @@ const NumberPropertyName = "number"
 
 func NewScanner(shp Shapefile) *Scanner {
 	return &Scanner{
-		shp:        shp,
-		featuresCh: make(chan *geojson.Feature),
+		shp:       shp,
+		recordsCh: make(chan *shapefile.Record),
 	}
 }
 
-func (s *Scanner) Scan(fieldProps map[string]string) error {
+func (s *Scanner) Scan(fields []string) error {
 	info, err := s.shp.Info()
 	if err != nil {
 		return err
 	}
 
-	fields := make([]string, len(fieldProps))
-	i := 0
-	for field := range fieldProps {
+	for _, field := range fields {
 		if !info.Fields.Exists(field) {
 			return fmt.Errorf("field '%s' does not exist in shapefile", field)
 		}
-		fields[i] = field
-		i++
 	}
 	s.shp.AddOptions(shapefile.FilterFields(fields...))
 
@@ -63,7 +58,7 @@ func (s *Scanner) Scan(fieldProps map[string]string) error {
 					fmt.Println(err)
 					s.setErr(err)
 				}
-				close(s.featuresCh)
+				close(s.recordsCh)
 			}()
 
 			for i := uint(1); ; i++ {
@@ -71,10 +66,7 @@ func (s *Scanner) Scan(fieldProps map[string]string) error {
 				if rec == nil {
 					break
 				}
-
-				feat := rec.GeoJSONFeature(shapefile.RenameProperties(fieldProps)).
-					AddProperty(NumberPropertyName, i)
-				s.featuresCh <- feat
+				s.recordsCh <- rec
 			}
 		}()
 	})
@@ -82,12 +74,12 @@ func (s *Scanner) Scan(fieldProps map[string]string) error {
 	return err
 }
 
-func (s *Scanner) Feature() *geojson.Feature {
-	feat, ok := <-s.featuresCh
+func (s *Scanner) Record() *shapefile.Record {
+	rec, ok := <-s.recordsCh
 	if !ok {
 		return nil
 	}
-	return feat
+	return rec
 }
 
 func (s *Scanner) Err() error {

@@ -2,8 +2,6 @@ package data
 
 import "github.com/mercatormaps/naturalearth"
 
-type Name string
-
 const (
 	BoundaryLines110Name = "boundary-lines-110m"
 	BoundaryLines50Name  = "boundary-lines-50m"
@@ -13,9 +11,11 @@ const (
 	Glaciers110Name      = "glaciers-110m"
 	Glaciers50Name       = "glaciers-50m"
 	Glaciers10Name       = "glaciers-10m"
+	UrbanAreas50Name     = "urban-areas-50m"
+	UrbanAreas10Name     = "urban-areas-10m"
 )
 
-var sources = map[Name]func() *naturalearth.Source{
+var sources = map[string]func() *naturalearth.Source{
 	BoundaryLines110Name: BoundaryLines110,
 	BoundaryLines50Name:  BoundaryLines50,
 	BoundaryLines10Name:  BoundaryLines10,
@@ -24,10 +24,12 @@ var sources = map[Name]func() *naturalearth.Source{
 	Glaciers110Name:      Glaciers110,
 	Glaciers50Name:       Glaciers50,
 	Glaciers10Name:       Glaciers10,
+	UrbanAreas50Name:     UrbanAreas50,
+	UrbanAreas10Name:     UrbanAreas10,
 }
 
 func Source(name string) (*naturalearth.Source, bool) {
-	f, ok := sources[Name(name)]
+	f, ok := sources[name]
 	if !ok {
 		return nil, false
 	}

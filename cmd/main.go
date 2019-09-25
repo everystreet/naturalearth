@@ -85,13 +85,13 @@ func update(conf *updateConf) {
 			}
 
 			atomic.AddUint64(&numFeatures, uint64(source.NumFeatures()))
-			atomic.AddUint64(&storedFeatures, uint64(source.StoredFeatures()))
+			atomic.AddUint64(&storedFeatures, uint64(source.NumInserts()))
 		}(name, uri)
 	}
 	wg.Wait()
 
 	uiprogress.Stop()
-	fmt.Printf("\nStored %d features (out of %d in total) from %d source(s) successfully\n",
+	fmt.Printf("\nCompleted %d inserts, from %d features, from %d source(s) successfully\n",
 		storedFeatures, numFeatures, len(config.DataSources))
 }
 

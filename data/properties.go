@@ -17,6 +17,14 @@ const (
 	LandcoverSubclassPropGlacier = "glacier"
 )
 
+// Landuse type property and associated properties.
+const (
+	TypePropLanduse = "landuse"
+
+	PropLanduseClass             = "class"
+	LanduserClassPropResidential = "residential"
+)
+
 // Zoom level properties.
 const (
 	PropMinZoom = "min_zoom"
@@ -27,4 +35,6 @@ const (
 const (
 	PropFeatureClass           = "featurecla"
 	FeatureClassPropLeaseLimit = "Lease limit"
+
+	PropScaleRank = "scalerank"
 )
