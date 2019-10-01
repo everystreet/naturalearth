@@ -44,10 +44,10 @@ func (e *ElasticSearch) Connect(hosts ...string) error {
 	return nil
 }
 
-func (e *ElasticSearch) Insert(feat *geojson.Feature, key string) (string, error) {
+func (e *ElasticSearch) Insert(feat *geojson.Feature, key string) error {
 	body, err := json.Marshal(feat)
 	if err != nil {
-		return key, errors.Wrap(err, "failed to marshal feature")
+		return errors.Wrap(err, "failed to marshal feature")
 	}
 
 	req := esapi.IndexRequest{
@@ -58,12 +58,11 @@ func (e *ElasticSearch) Insert(feat *geojson.Feature, key string) (string, error
 
 	resp, err := req.Do(context.Background(), e.cli)
 	if err != nil {
-		return key, errors.Wrap(err, "failed to process request")
+		return errors.Wrap(err, "failed to process request")
 	}
 	defer resp.Body.Close()
 	if resp.IsError() {
-		return key, fmt.Errorf("[%s]: %s", resp.Status(), resp.String())
+		return fmt.Errorf("[%s]: %s", resp.Status(), resp.String())
 	}
-
-	return key, nil
+	return nil
 }

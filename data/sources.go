@@ -2,6 +2,7 @@ package data
 
 import "github.com/mercatormaps/naturalearth"
 
+// Source names correspond to Natural Earth shapefiles.
 const (
 	BoundaryLines110Name = "boundary-lines-110m"
 	BoundaryLines50Name  = "boundary-lines-50m"

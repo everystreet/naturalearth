@@ -9,22 +9,24 @@ var UrbanAreas50 = func() *naturalearth.Source {
 	return &naturalearth.Source{
 		Name: UrbanAreas50Name,
 		Schemas: []naturalearth.Schema{
-			{
-				Opts: []naturalearth.Option{
-					naturalearth.AddProperty(PropType, TypePropLanduse),
-					naturalearth.AddProperty(PropMinZoom, 4),
-					naturalearth.AddProperty(PropMaxZoom, 4),
-				},
-				ShouldStore: scaleRankIsLessThan(3),
-				GetKey:      BasicKey("urban_area_50m_0"),
-			},
-			{
-				Opts: []naturalearth.Option{
-					naturalearth.AddProperty(PropType, TypePropLanduse),
-					naturalearth.AddProperty(PropMinZoom, 5),
-					naturalearth.AddProperty(PropMaxZoom, 5),
-				},
-				GetKey: BasicKey("urban_area_50m_1"),
+			func(feat geojson.Feature, meta *naturalearth.Meta) (string, error) {
+				meta.AddProperty(PropType, TypePropLanduse)
+				meta.AddProperty(PropLanduseClass, LanduserClassPropResidential)
+
+				var scaleRank float64
+				if err := feat.Properties.GetType(PropScaleRank, &scaleRank); err != nil {
+					return "", err
+				}
+
+				switch {
+				case scaleRank < 3:
+					meta.AddProperty(PropMinZoom, 4)
+				default:
+					meta.AddProperty(PropMinZoom, 5)
+				}
+
+				meta.AddProperty(PropMaxZoom, 5)
+				return basicKey("urban_area_50m", feat)
 			},
 		},
 	}
@@ -34,43 +36,29 @@ var UrbanAreas10 = func() *naturalearth.Source {
 	return &naturalearth.Source{
 		Name: UrbanAreas10Name,
 		Schemas: []naturalearth.Schema{
-			{
-				Opts: []naturalearth.Option{
-					naturalearth.AddProperty(PropType, TypePropLanduse),
-					naturalearth.AddProperty(PropMinZoom, 6),
-					naturalearth.AddProperty(PropMaxZoom, 6),
-				},
-				ShouldStore: scaleRankIsLessThan(6),
-				GetKey:      BasicKey("urban_area_10m_0"),
-			},
-			{
-				Opts: []naturalearth.Option{
-					naturalearth.AddProperty(PropType, TypePropLanduse),
-					naturalearth.AddProperty(PropMinZoom, 7),
-					naturalearth.AddProperty(PropMaxZoom, 7),
-				},
-				ShouldStore: scaleRankIsLessThan(7),
-				GetKey:      BasicKey("urban_area_10m_1"),
-			},
-			{
-				Opts: []naturalearth.Option{
-					naturalearth.AddProperty(PropType, TypePropLanduse),
-					naturalearth.AddProperty(PropMinZoom, 8),
-					naturalearth.AddProperty(PropMaxZoom, 8),
-				},
-				ShouldStore: scaleRankIsLessThan(8),
-				GetKey:      BasicKey("urban_area_10m_2"),
+			func(feat geojson.Feature, meta *naturalearth.Meta) (string, error) {
+				meta.AddProperty(PropType, TypePropLanduse)
+				meta.AddProperty(PropLanduseClass, LanduserClassPropResidential)
+
+				var scaleRank float64
+				if err := feat.Properties.GetType(PropScaleRank, &scaleRank); err != nil {
+					return "", err
+				}
+
+				switch {
+				case scaleRank < 6:
+					meta.AddProperty(PropMinZoom, 6)
+				case scaleRank < 7:
+					meta.AddProperty(PropMinZoom, 7)
+				case scaleRank < 8:
+					meta.AddProperty(PropMinZoom, 8)
+				default:
+					return "", nil
+				}
+
+				meta.AddProperty(PropMaxZoom, 8)
+				return basicKey("urban_area_10m", feat)
 			},
 		},
-	}
-}
-
-func scaleRankIsLessThan(n float64) naturalearth.Filter {
-	return func(feat *geojson.Feature) (bool, error) {
-		var scaleRank float64
-		if err := feat.Properties.GetType(PropScaleRank, &scaleRank); err != nil {
-			return false, err
-		}
-		return scaleRank < n, nil
 	}
 }

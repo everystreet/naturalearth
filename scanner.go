@@ -34,19 +34,8 @@ func NewScanner(shp Shapefile) *Scanner {
 	}
 }
 
-func (s *Scanner) Scan(fields []string) error {
-	info, err := s.shp.Info()
-	if err != nil {
-		return err
-	}
-
-	for _, field := range fields {
-		if !info.Fields.Exists(field) {
-			return fmt.Errorf("field '%s' does not exist in shapefile", field)
-		}
-	}
-	s.shp.AddOptions(shapefile.FilterFields(fields...))
-
+func (s *Scanner) Scan() error {
+	var err error
 	s.scanOnce.Do(func() {
 		if err = s.shp.Scan(); err != nil {
 			return

@@ -1,20 +1,21 @@
 package data
 
-import "github.com/mercatormaps/naturalearth"
+import (
+	"github.com/mercatormaps/go-geojson"
+	"github.com/mercatormaps/naturalearth"
+)
 
 var Glaciers110 = func() *naturalearth.Source {
 	return &naturalearth.Source{
 		Name: Glaciers110Name,
 		Schemas: []naturalearth.Schema{
-			{
-				Opts: []naturalearth.Option{
-					naturalearth.AddProperty(PropType, TypePropLandcover),
-					naturalearth.AddProperty(PropMinZoom, 0),
-					naturalearth.AddProperty(PropMaxZoom, 1),
-					naturalearth.AddProperty(PropLandcoverClass, LandcoverClassPropIce),
-					naturalearth.AddProperty(PropLandcoverSubclass, LandcoverSubclassPropGlacier),
-				},
-				GetKey: BasicKey("glacier_110m"),
+			func(feat geojson.Feature, meta *naturalearth.Meta) (string, error) {
+				meta.AddProperty(PropType, TypePropLandcover)
+				meta.AddProperty(PropMinZoom, 0)
+				meta.AddProperty(PropMaxZoom, 1)
+				meta.AddProperty(PropLandcoverClass, LandcoverClassPropIce)
+				meta.AddProperty(PropLandcoverSubclass, LandcoverSubclassPropGlacier)
+				return basicKey("glacier_110m", feat)
 			},
 		},
 	}
@@ -24,15 +25,13 @@ var Glaciers50 = func() *naturalearth.Source {
 	return &naturalearth.Source{
 		Name: Glaciers50Name,
 		Schemas: []naturalearth.Schema{
-			{
-				Opts: []naturalearth.Option{
-					naturalearth.AddProperty(PropType, TypePropLandcover),
-					naturalearth.AddProperty(PropMinZoom, 2),
-					naturalearth.AddProperty(PropMaxZoom, 4),
-					naturalearth.AddProperty(PropLandcoverClass, LandcoverClassPropIce),
-					naturalearth.AddProperty(PropLandcoverSubclass, LandcoverSubclassPropGlacier),
-				},
-				GetKey: BasicKey("glacier_50m"),
+			func(feat geojson.Feature, meta *naturalearth.Meta) (string, error) {
+				meta.AddProperty(PropType, TypePropLandcover)
+				meta.AddProperty(PropMinZoom, 2)
+				meta.AddProperty(PropMaxZoom, 4)
+				meta.AddProperty(PropLandcoverClass, LandcoverClassPropIce)
+				meta.AddProperty(PropLandcoverSubclass, LandcoverSubclassPropGlacier)
+				return basicKey("glacier_50m", feat)
 			},
 		},
 	}
@@ -42,15 +41,13 @@ var Glaciers10 = func() *naturalearth.Source {
 	return &naturalearth.Source{
 		Name: Glaciers10Name,
 		Schemas: []naturalearth.Schema{
-			{
-				Opts: []naturalearth.Option{
-					naturalearth.AddProperty(PropType, TypePropLandcover),
-					naturalearth.AddProperty(PropMinZoom, 5),
-					naturalearth.AddProperty(PropMaxZoom, 6),
-					naturalearth.AddProperty(PropLandcoverClass, LandcoverClassPropIce),
-					naturalearth.AddProperty(PropLandcoverSubclass, LandcoverSubclassPropGlacier),
-				},
-				GetKey: BasicKey("glacier_10m"),
+			func(feat geojson.Feature, meta *naturalearth.Meta) (string, error) {
+				meta.AddProperty(PropType, TypePropLandcover)
+				meta.AddProperty(PropMinZoom, 5)
+				meta.AddProperty(PropMaxZoom, 6)
+				meta.AddProperty(PropLandcoverClass, LandcoverClassPropIce)
+				meta.AddProperty(PropLandcoverSubclass, LandcoverSubclassPropGlacier)
+				return basicKey("glacier_10m", feat)
 			},
 		},
 	}
