@@ -3,8 +3,8 @@ package data
 import (
 	"strings"
 
-	"github.com/mercatormaps/go-geojson"
-	"github.com/mercatormaps/naturalearth"
+	"github.com/everystreet/go-geojson/v2"
+	"github.com/everystreet/naturalearth"
 )
 
 var BoundaryLines110 = func() *naturalearth.Source {
@@ -41,7 +41,7 @@ var BoundaryLines10 = func() *naturalearth.Source {
 		Schemas: []naturalearth.Schema{
 			func(feat geojson.Feature, meta *naturalearth.Meta) (string, error) {
 				var class string
-				if err := feat.Properties.GetType(PropFeatureClass, &class); err != nil {
+				if err := feat.Properties.GetValue(PropFeatureClass, &class); err != nil {
 					return "", err
 				} else if strings.EqualFold(class, FeatureClassPropLeaseLimit) {
 					return "", nil

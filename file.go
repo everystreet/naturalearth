@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/everystreet/go-shapefile"
 	"github.com/gosuri/uiprogress"
-	"github.com/mercatormaps/go-shapefile"
 )
 
 type File interface {

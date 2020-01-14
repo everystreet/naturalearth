@@ -1,8 +1,8 @@
 package data
 
 import (
-	"github.com/mercatormaps/go-geojson"
-	"github.com/mercatormaps/naturalearth"
+	"github.com/everystreet/go-geojson/v2"
+	"github.com/everystreet/naturalearth"
 )
 
 var UrbanAreas50 = func() *naturalearth.Source {
@@ -14,7 +14,7 @@ var UrbanAreas50 = func() *naturalearth.Source {
 				meta.AddProperty(PropLanduseClass, LanduserClassPropResidential)
 
 				var scaleRank float64
-				if err := feat.Properties.GetType(PropScaleRank, &scaleRank); err != nil {
+				if err := feat.Properties.GetValue(PropScaleRank, &scaleRank); err != nil {
 					return "", err
 				}
 
@@ -41,7 +41,7 @@ var UrbanAreas10 = func() *naturalearth.Source {
 				meta.AddProperty(PropLanduseClass, LanduserClassPropResidential)
 
 				var scaleRank float64
-				if err := feat.Properties.GetType(PropScaleRank, &scaleRank); err != nil {
+				if err := feat.Properties.GetValue(PropScaleRank, &scaleRank); err != nil {
 					return "", err
 				}
 

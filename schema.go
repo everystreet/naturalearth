@@ -1,7 +1,7 @@
 package naturalearth
 
 import (
-	"github.com/mercatormaps/go-geojson"
+	"github.com/everystreet/go-geojson/v2"
 )
 
 type Schema func(geojson.Feature, *Meta) (string, error)

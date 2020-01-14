@@ -7,10 +7,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/mercatormaps/naturalearth"
-	"github.com/mercatormaps/naturalearth/data"
-
 	"github.com/BurntSushi/toml"
+	"github.com/everystreet/naturalearth"
+	"github.com/everystreet/naturalearth/data"
 	"github.com/gosuri/uiprogress"
 	"gopkg.in/alecthomas/kingpin.v2"
 )

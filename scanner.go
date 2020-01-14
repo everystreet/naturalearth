@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/mercatormaps/go-shapefile"
+	"github.com/everystreet/go-shapefile"
 )
 
 type Scanner struct {

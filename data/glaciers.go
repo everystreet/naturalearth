@@ -1,8 +1,8 @@
 package data
 
 import (
-	"github.com/mercatormaps/go-geojson"
-	"github.com/mercatormaps/naturalearth"
+	"github.com/everystreet/go-geojson/v2"
+	"github.com/everystreet/naturalearth"
 )
 
 var Glaciers110 = func() *naturalearth.Source {

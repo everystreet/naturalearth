@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/everystreet/go-geojson/v2"
+	"github.com/everystreet/go-shapefile"
 	"github.com/gosuri/uiprogress"
-	"github.com/mercatormaps/go-geojson"
-	"github.com/mercatormaps/go-shapefile"
-	"github.com/pkg/errors"
 )
 
 type Source struct {
@@ -46,7 +45,7 @@ func (s *Source) open(uri string) (*shapefile.ZipScanner, error) {
 	source := NewFile(uri, s.Label+": Downloading", http.DefaultClient)
 	scanner, err := source.Open()
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to open source '%s'", uri)
+		return nil, fmt.Errorf("failed to open source '%s': %w", uri, err)
 	}
 	return scanner, nil
 }

@@ -1,8 +1,8 @@
 package data
 
 import (
-	"github.com/mercatormaps/go-geojson"
-	"github.com/mercatormaps/naturalearth"
+	"github.com/everystreet/go-geojson/v2"
+	"github.com/everystreet/naturalearth"
 )
 
 var StateLines50 = func() *naturalearth.Source {
@@ -25,7 +25,7 @@ var StateLines10 = func() *naturalearth.Source {
 		Schemas: []naturalearth.Schema{
 			func(feat geojson.Feature, meta *naturalearth.Meta) (string, error) {
 				var minZoom float64
-				if err := feat.Properties.GetType(PropMinZoom, &minZoom); err != nil {
+				if err := feat.Properties.GetValue(PropMinZoom, &minZoom); err != nil {
 					return "", err
 				} else if minZoom > 5 {
 					return "", nil

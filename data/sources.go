@@ -1,6 +1,8 @@
 package data
 
-import "github.com/mercatormaps/naturalearth"
+import (
+	"github.com/everystreet/naturalearth"
+)
 
 // Source names correspond to Natural Earth shapefiles.
 const (

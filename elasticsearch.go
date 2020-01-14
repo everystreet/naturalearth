@@ -6,11 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/mercatormaps/go-geojson"
-
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/pkg/errors"
+	"github.com/everystreet/go-geojson/v2"
 )
 
 type ElasticSearch struct {
@@ -24,20 +22,20 @@ func (e *ElasticSearch) Connect(hosts ...string) error {
 
 	cli, err := elasticsearch.NewClient(elasticsearch.Config{Addresses: hosts})
 	if err != nil {
-		return errors.Wrap(err, "failed to connect")
+		return fmt.Errorf("failed to connect: %w", err)
 	}
 	e.cli = cli
 
 	resp, err := cli.Info()
 	if err != nil {
-		return errors.Wrap(err, "failed to get server info")
+		return fmt.Errorf("failed to get server info: %w", err)
 	} else if resp.IsError() {
 		return fmt.Errorf("[%s]: %s", resp.Status(), resp.String())
 	}
 
 	var info map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
-		return errors.Wrap(err, "failed to decode info")
+		return fmt.Errorf("failed to decode info: %w", err)
 	}
 	e.serverVersion = info["version"].(map[string]interface{})["number"].(string)
 
@@ -47,7 +45,7 @@ func (e *ElasticSearch) Connect(hosts ...string) error {
 func (e *ElasticSearch) Insert(feat *geojson.Feature, key string) error {
 	body, err := json.Marshal(feat)
 	if err != nil {
-		return errors.Wrap(err, "failed to marshal feature")
+		return fmt.Errorf("failed to marshal feature: %w", err)
 	}
 
 	req := esapi.IndexRequest{
@@ -58,7 +56,7 @@ func (e *ElasticSearch) Insert(feat *geojson.Feature, key string) error {
 
 	resp, err := req.Do(context.Background(), e.cli)
 	if err != nil {
-		return errors.Wrap(err, "failed to process request")
+		return fmt.Errorf("failed to process request: %w", err)
 	}
 	defer resp.Body.Close()
 	if resp.IsError() {
